@@ -1,0 +1,53 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --primary-color: #8b0000;
+  --secondary-color: #ff4444;
+  --background: #0a0000;
+  --card-background: #1a1a1a;
+  --text-primary: #ffcccc;
+  --text-secondary: #cc9999;
+  --border-color: #4a0000;
+  --shadow: 0 4px 16px rgba(139, 0, 0, 0.4);
+  --shadow-hover: 0 6px 24px rgba(139, 0, 0, 0.6);
+  --success-color: #00cc66;
+  --warning-color: #ff8800;
+  --danger-color: #ff0000;
+  --info-color: #ff6666;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(135deg, #0a0000 0%, #1a0000 50%, #0a0000 100%);
+  background-attachment: fixed;
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+

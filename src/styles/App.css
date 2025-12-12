@@ -1,0 +1,192 @@
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  background: linear-gradient(135deg, #1a0000 0%, #8b0000 50%, #1a0000 100%);
+  color: #ffcccc;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 4px 20px rgba(139, 0, 0, 0.6), inset 0 0 40px rgba(139, 0, 0, 0.2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  border-bottom: 3px solid #8b0000;
+}
+
+.app-title {
+  font-size: 2rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-shadow: 0 0 15px rgba(255, 68, 68, 0.8), 0 2px 4px rgba(0, 0, 0, 0.8);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #ff4444;
+}
+
+.title-emoji {
+  font-size: 2.5rem;
+  animation: float 3s infinite;
+  filter: drop-shadow(0 0 10px rgba(255, 68, 68, 0.8));
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(5deg);
+  }
+}
+
+.header-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.season-badge {
+  background: rgba(139, 0, 0, 0.4);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  backdrop-filter: blur(10px);
+  border: 2px solid #ff4444;
+  color: #ffcccc;
+  text-shadow: 0 0 8px rgba(255, 68, 68, 0.6);
+  box-shadow: 0 0 15px rgba(255, 68, 68, 0.3);
+}
+
+.notification-toggle {
+  background: rgba(139, 0, 0, 0.4);
+  border: 2px solid #ff4444;
+  padding: 0.5rem 1rem;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 15px rgba(255, 68, 68, 0.4);
+  color: #ffcccc;
+}
+
+.notification-toggle:hover {
+  background: rgba(139, 0, 0, 0.6);
+  transform: scale(1.1);
+  box-shadow: 0 0 20px rgba(255, 68, 68, 0.6);
+}
+
+.notification-toggle.enabled {
+  background: rgba(255, 68, 68, 0.3);
+  border-color: #ff6666;
+  box-shadow: 0 0 20px rgba(255, 68, 68, 0.8);
+}
+
+.app-main {
+  flex: 1;
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  background: transparent;
+}
+
+.view-toggle {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  justify-content: center;
+}
+
+.toggle-btn {
+  padding: 0.75rem 2rem;
+  background: linear-gradient(135deg, #2a1a1a 0%, #1a0a0a 100%);
+  border: 2px solid #8b0000;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #cc9999;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.toggle-btn:hover {
+  border-color: #ff4444;
+  color: #ffcccc;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(139, 0, 0, 0.6), inset 0 0 15px rgba(255, 68, 68, 0.2);
+  background: linear-gradient(135deg, #3a2a2a 0%, #2a1a1a 100%);
+}
+
+.toggle-btn.active {
+  background: linear-gradient(135deg, #8b0000 0%, #660000 100%);
+  color: #ffcccc;
+  border-color: #ff4444;
+  box-shadow: 0 0 20px rgba(255, 68, 68, 0.6), inset 0 0 20px rgba(255, 0, 0, 0.3);
+  text-shadow: 0 0 10px rgba(255, 204, 204, 0.8);
+}
+
+.plants-view {
+  width: 100%;
+}
+
+.calendar-view {
+  width: 100%;
+}
+
+.app-footer {
+  background: linear-gradient(135deg, #1a0000 0%, #0a0000 100%);
+  padding: 1.5rem;
+  text-align: center;
+  color: #cc9999;
+  border-top: 3px solid #8b0000;
+  margin-top: auto;
+  box-shadow: 0 -4px 20px rgba(139, 0, 0, 0.4);
+}
+
+.app-footer p {
+  font-size: 0.9rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .app-header {
+    padding: 1rem;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .app-title {
+    font-size: 1.5rem;
+  }
+
+  .title-emoji {
+    font-size: 2rem;
+  }
+
+  .app-main {
+    padding: 1rem;
+  }
+
+  .view-toggle {
+    margin-bottom: 1rem;
+  }
+
+  .toggle-btn {
+    padding: 0.5rem 1.5rem;
+    font-size: 0.9rem;
+  }
+}
+
