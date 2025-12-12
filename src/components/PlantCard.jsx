@@ -5,7 +5,7 @@ import { getLastWateredDate, getWateringHistoryForPlant, isWateredOnDate } from 
 import { getNextWateringDate, formatDisplayDate, getDaysUntilWatering, isWateringDue, getDaysOverdue, formatDate } from '../utils/dateHelpers';
 import '../styles/PlantCard.css';
 
-const PlantCard = ({ plant, wateringHistory, onWaterClick }) => {
+const PlantCard = ({ plant, wateringHistory, onWaterClick, onDelete, isCustomPlant }) => {
   const lastWatered = getLastWateredDate(wateringHistory, plant.id);
   const wateringDays = getAdjustedWateringDays(plant);
   const nextWateringDate = lastWatered ? getNextWateringDate(lastWatered, wateringDays) : null;
@@ -38,6 +38,15 @@ const PlantCard = ({ plant, wateringHistory, onWaterClick }) => {
 
   return (
     <div className={`plant-card ${getStatusClass()}`}>
+      {onDelete && (
+        <button 
+          className="delete-plant-btn"
+          onClick={() => onDelete(plant.id)}
+          title="Delete this plant"
+        >
+          🗑️
+        </button>
+      )}
       <div className="plant-header">
         <div className="plant-emoji">{plant.emoji}</div>
         <h3 className="plant-name">{plant.name}</h3>

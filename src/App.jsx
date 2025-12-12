@@ -10,6 +10,7 @@ import {
   getNotificationPreferences, 
   saveNotificationPreferences, 
   addCustomPlant,
+  deleteCustomPlant,
   getWateringHistoryForPlant,
   getLastWateredDate,
   isWateredOnDate,
@@ -32,10 +33,19 @@ function App() {
   const [showCalendar, setShowCalendar] = useState(true);
   const [showNewPlantModal, setShowNewPlantModal] = useState(false);
   const [currentSeason] = useState(getCurrentSeason());
+  const [hiddenPlantIds, setHiddenPlantIds] = useState(() => {
+    // Load hidden plants from localStorage (per-user preference)
+    try {
+      const stored = localStorage.getItem('hidden_plants');
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
 
-  // Combine default plants with custom plants from database
+  // Combine default plants with custom plants from database, filter out hidden ones
   const customPlantsArray = data?.customPlants || [];
-  const allPlants = [...PLANTS, ...customPlantsArray];
+  const allPlants = [...PLANTS, ...customPlantsArray].filter(plant => !hiddenPlantIds.includes(plant.id));
   
   const wateringHistory = data?.wateringHistory || [];
 
@@ -128,6 +138,39 @@ function App() {
     // InstantDB will automatically update the UI
   };
 
+  // Handle deleting a plant
+  const handleDeletePlant = (plantId) => {
+    // Ask for confirmation
+    const plant = allPlants.find(p => p.id === plantId);
+    if (!plant) return;
+    
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete "${plant.name}"? This will remove all watering history for this plant.`
+    );
+    
+    if (!confirmDelete) return;
+
+    // Check if it's a custom plant (from database) or default plant
+    const isCustomPlant = customPlantsArray.some(p => p.id === plantId);
+    
+    if (isCustomPlant) {
+      // Delete from InstantDB
+      deleteCustomPlant(plantId);
+    } else {
+      // It's a default plant - add to hidden list
+      const newHiddenIds = [...hiddenPlantIds, plantId];
+      setHiddenPlantIds(newHiddenIds);
+      localStorage.setItem('hidden_plants', JSON.stringify(newHiddenIds));
+    }
+    
+    // Also clear watering history for this plant
+    // (You might want to keep the history, but I'll delete it for cleanup)
+    const plantWateringRecords = wateringHistory.filter(record => record.plantId === plantId);
+    plantWateringRecords.forEach(record => {
+      unmarkPlantAsWatered(record.id);
+    });
+  };
+
   // Show loading state while data is being fetched
   if (isLoading) {
     return (
@@ -210,6 +253,7 @@ function App() {
               wateringHistory={wateringHistory}
               onWaterClick={handleWaterClick}
               onNewPlantClick={() => setShowNewPlantModal(true)}
+              onDeletePlant={handleDeletePlant}
             />
           </div>
         )}
