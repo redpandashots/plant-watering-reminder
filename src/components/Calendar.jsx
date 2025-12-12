@@ -18,36 +18,49 @@ const Calendar = ({ plants, wateringHistory, onDateClick, onMarkWatered, onUnmar
 
   const getWateringDatesForMonth = () => {
     const wateringDates = {};
-    const endDate = new Date('2030-12-31T23:59:59'); // Generate dates up to end of 2030
+    const today = new Date();
+    const futureLimit = new Date(today);
+    futureLimit.setFullYear(futureLimit.getFullYear() + 1); // Look ahead 1 year
     
     plants.forEach(plant => {
       const lastWatered = getLastWateredDate(wateringHistory, plant.id);
       if (!lastWatered) return;
       
       // Start from the last watered date
-      let currentWateringDate = new Date(lastWatered);
+      let currentWateringDate = new Date(lastWatered + 'T00:00:00');
       
-      // Generate all watering dates up to 2030
-      while (currentWateringDate <= endDate) {
+      // Generate future watering dates
+      while (currentWateringDate <= futureLimit) {
         // Get the season for the current date to calculate proper interval
         const season = getSeasonForDate(currentWateringDate);
-        const adjustedDays = Math.round(plant.baseWateringDays * plant.seasonalAdjustments[season]);
+        const adjustedDays = Math.round(plant.baseWateringDays * (plant.seasonalAdjustments?.[season] || 1.0));
         
         // Calculate next watering date
         const nextWatering = new Date(currentWateringDate);
         nextWatering.setDate(nextWatering.getDate() + adjustedDays);
         
-        // Only add dates that are in the current month being viewed
-        if (isSameMonth(nextWatering, currentMonth)) {
-          const dateStr = formatDate(nextWatering);
-          if (!wateringDates[dateStr]) {
-            wateringDates[dateStr] = [];
+        // Check if this date was already manually watered
+        const nextWateringStr = formatDate(nextWatering);
+        const isAlreadyWatered = isWateredOnDate(wateringHistory, plant.id, nextWatering);
+        
+        // Only add as "scheduled" if not already watered and in current viewing month
+        if (!isAlreadyWatered && isSameMonth(nextWatering, currentMonth)) {
+          if (!wateringDates[nextWateringStr]) {
+            wateringDates[nextWateringStr] = [];
           }
-          wateringDates[dateStr].push(plant);
+          // Only add if not already in the list
+          if (!wateringDates[nextWateringStr].some(p => p.id === plant.id)) {
+            wateringDates[nextWateringStr].push(plant);
+          }
         }
         
         // Move to next watering date
         currentWateringDate = nextWatering;
+        
+        // Stop if we're too far beyond the viewing month
+        if (isAfter(currentWateringDate, endOfMonth(addMonths(currentMonth, 2)))) {
+          break;
+        }
       }
     });
     
