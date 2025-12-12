@@ -1,23 +1,21 @@
 import React from 'react';
 import { isSameDay } from 'date-fns';
 import { getAdjustedWateringDays } from '../utils/seasonal';
-import { getLastWateredDate, getWateringHistoryForPlant } from '../utils/storage';
+import { getLastWateredDate, getWateringHistoryForPlant, isWateredOnDate } from '../utils/instantdb';
 import { getNextWateringDate, formatDisplayDate, getDaysUntilWatering, isWateringDue, getDaysOverdue, formatDate } from '../utils/dateHelpers';
 import '../styles/PlantCard.css';
 
-const PlantCard = ({ plant, onWaterClick }) => {
-  const lastWatered = getLastWateredDate(plant.id);
+const PlantCard = ({ plant, wateringHistory, onWaterClick }) => {
+  const lastWatered = getLastWateredDate(wateringHistory, plant.id);
   const wateringDays = getAdjustedWateringDays(plant);
   const nextWateringDate = lastWatered ? getNextWateringDate(lastWatered, wateringDays) : null;
   const daysUntil = nextWateringDate ? getDaysUntilWatering(nextWateringDate) : null;
   const isDue = nextWateringDate ? isWateringDue(nextWateringDate) : false;
   const daysOverdue = nextWateringDate ? getDaysOverdue(nextWateringDate) : 0;
   
-  // Check if plant was actually watered TODAY (not just if last watered date is today)
+  // Check if plant was actually watered TODAY
   const isWateredToday = () => {
-    const history = getWateringHistoryForPlant(plant.id);
-    const todayStr = formatDate(new Date());
-    return history.includes(todayStr);
+    return isWateredOnDate(wateringHistory, plant.id, new Date());
   };
 
   const getStatusClass = () => {

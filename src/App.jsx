@@ -3,48 +3,70 @@ import { PLANTS } from './data/plants';
 import PlantList from './components/PlantList';
 import Calendar from './components/Calendar';
 import NewPlantModal from './components/NewPlantModal';
-import { markPlantAsWatered, unmarkPlantAsWatered, getNotificationPreferences, saveNotificationPreferences, getCustomPlants, addCustomPlant, getWateringHistoryForPlant } from './utils/storage';
+import db from './database';
+import { 
+  markPlantAsWatered, 
+  unmarkPlantAsWatered, 
+  getNotificationPreferences, 
+  saveNotificationPreferences, 
+  addCustomPlant,
+  getWateringHistoryForPlant,
+  getLastWateredDate,
+  isWateredOnDate,
+  getWateringRecordId
+} from './utils/instantdb';
 import { requestNotificationPermission, scheduleDailyCheck } from './utils/notifications';
-import { getLastWateredDate } from './utils/storage';
 import { getAdjustedWateringDays } from './utils/seasonal';
 import { getNextWateringDate, isWateringDue, formatDate } from './utils/dateHelpers';
 import { getCurrentSeason } from './utils/seasonal';
 import './styles/App.css';
 
 function App() {
-  const [allPlants, setAllPlants] = useState([...PLANTS, ...getCustomPlants()]);
-  const [refreshKey, setRefreshKey] = useState(0);
+  // Fetch shared data from InstantDB
+  const { isLoading, error, data } = db.useQuery({
+    wateringHistory: {},
+    customPlants: {},
+  });
+
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [showCalendar, setShowCalendar] = useState(true);
   const [showNewPlantModal, setShowNewPlantModal] = useState(false);
   const [currentSeason] = useState(getCurrentSeason());
 
-  // Force re-render to update plant statuses
+  // Combine default plants with custom plants from database
+  const customPlantsArray = data?.customPlants || [];
+  const allPlants = [...PLANTS, ...customPlantsArray];
+  
+  const wateringHistory = data?.wateringHistory || [];
+
+  // Force re-render helper (not needed with InstantDB's reactive updates)
   const refresh = useCallback(() => {
-    setRefreshKey(prev => prev + 1);
+    // InstantDB automatically updates, but keeping for compatibility
   }, []);
 
   // Handle watering a plant (toggle for today)
   const handleWaterClick = (plantId) => {
     const today = new Date();
-    const todayStr = formatDate(today);
-    const history = getWateringHistoryForPlant(plantId);
     
     // Check if already watered today
-    if (history.includes(todayStr)) {
-      // Unmark for today
-      unmarkPlantAsWatered(plantId, today);
+    if (isWateredOnDate(wateringHistory, plantId, today)) {
+      // Unmark for today - find the record ID and delete it
+      const recordId = getWateringRecordId(wateringHistory, plantId, today);
+      if (recordId) {
+        unmarkPlantAsWatered(recordId);
+      }
     } else {
       // Mark as watered today
       markPlantAsWatered(plantId, today);
     }
-    refresh();
   };
 
   // Handle unmarking a plant as watered
   const handleUnmarkWatered = (plantId, date) => {
-    unmarkPlantAsWatered(plantId, date);
-    refresh(); // Force re-render of calendar and modal
+    const recordId = getWateringRecordId(wateringHistory, plantId, date);
+    if (recordId) {
+      unmarkPlantAsWatered(recordId);
+    }
   };
 
   // Load notification preferences
@@ -53,22 +75,24 @@ function App() {
     setNotificationsEnabled(prefs.enabled);
   }, []);
 
-  // Load custom plants on mount
-  useEffect(() => {
-    const customPlants = getCustomPlants();
-    setAllPlants([...PLANTS, ...customPlants]);
-  }, []);
+  // Custom plants are automatically loaded via InstantDB useQuery hook
+  // No need for separate useEffect
 
   // Request notification permission and set up daily checks
   useEffect(() => {
     let interval = null;
     
-    if (notificationsEnabled) {
+    if (notificationsEnabled && wateringHistory) {
       requestNotificationPermission().then(hasPermission => {
         if (hasPermission) {
+          // Create a wrapper function that passes wateringHistory to getLastWateredDate
+          const getLastWateredDateForPlant = (plantId) => {
+            return getLastWateredDate(wateringHistory, plantId);
+          };
+          
           interval = scheduleDailyCheck(
             allPlants,
-            getLastWateredDate,
+            getLastWateredDateForPlant,
             getAdjustedWateringDays,
             getNextWateringDate,
             isWateringDue
@@ -82,7 +106,7 @@ function App() {
         clearInterval(interval);
       }
     };
-  }, [notificationsEnabled, allPlants]);
+  }, [notificationsEnabled, allPlants, wateringHistory]);
 
   // Toggle notifications
   const handleToggleNotifications = async () => {
@@ -101,9 +125,32 @@ function App() {
   // Handle adding a new plant
   const handleAddPlant = (newPlant) => {
     addCustomPlant(newPlant);
-    setAllPlants([...PLANTS, ...getCustomPlants()]);
-    refresh();
+    // InstantDB will automatically update the UI
   };
+
+  // Show loading state while data is being fetched
+  if (isLoading) {
+    return (
+      <div className="app">
+        <div className="loading-container">
+          <div className="loading-spinner">🌱</div>
+          <p>Loading your plants...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state if there's an error
+  if (error) {
+    return (
+      <div className="app">
+        <div className="error-container">
+          <p>❌ Error loading data: {error.message}</p>
+          <p>Please refresh the page or check your internet connection.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="app">
@@ -143,15 +190,13 @@ function App() {
         {showCalendar ? (
           <div className="calendar-view">
             <Calendar 
-              key={refreshKey}
               plants={allPlants}
-              refreshKey={refreshKey}
+              wateringHistory={wateringHistory}
               onDateClick={(date) => {
                 // Date click handled in Calendar component
               }}
               onMarkWatered={(plantId, date) => {
                 markPlantAsWatered(plantId, date);
-                refresh();
               }}
               onUnmarkWatered={(plantId, date) => {
                 handleUnmarkWatered(plantId, date);
@@ -161,8 +206,8 @@ function App() {
         ) : (
           <div className="plants-view">
             <PlantList 
-              key={refreshKey}
-              plants={allPlants} 
+              plants={allPlants}
+              wateringHistory={wateringHistory}
               onWaterClick={handleWaterClick}
               onNewPlantClick={() => setShowNewPlantModal(true)}
             />

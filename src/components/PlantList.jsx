@@ -2,14 +2,15 @@ import React from 'react';
 import PlantCard from './PlantCard';
 import '../styles/PlantList.css';
 
-const PlantList = ({ plants, onWaterClick, onNewPlantClick }) => {
+const PlantList = ({ plants, wateringHistory, onWaterClick, onNewPlantClick }) => {
   return (
     <div className="plant-list-container">
       <div className="plant-list">
         {plants.map(plant => (
           <PlantCard 
             key={plant.id} 
-            plant={plant} 
+            plant={plant}
+            wateringHistory={wateringHistory}
             onWaterClick={onWaterClick}
           />
         ))}

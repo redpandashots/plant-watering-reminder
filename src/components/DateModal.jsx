@@ -1,35 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { formatDisplayDate, formatDate } from '../utils/dateHelpers';
-import { getWateringHistoryForPlant } from '../utils/storage';
+import { isWateredOnDate } from '../utils/instantdb';
 import { isSameDay } from 'date-fns';
 import '../styles/DateModal.css';
 
-const DateModal = ({ selectedDate, plants, onClose, onMarkWatered, onUnmarkWatered, refreshKey }) => {
-  const [localRefresh, setLocalRefresh] = useState(0);
-
+const DateModal = ({ selectedDate, plants, wateringHistory, onClose, onMarkWatered, onUnmarkWatered }) => {
   if (!selectedDate) return null;
 
   const dateStr = formatDate(selectedDate);
   const selectedDateObj = new Date(selectedDate);
 
-  // Force re-render when refreshKey changes
-  useEffect(() => {
-    setLocalRefresh(prev => prev + 1);
-  }, [refreshKey]);
-
   const isPlantWateredOnDate = (plantId) => {
-    const history = getWateringHistoryForPlant(plantId);
-    const selectedDateStr = formatDate(selectedDateObj);
-    // Use string comparison for reliability (dates are stored as YYYY-MM-DD)
-    return history.includes(selectedDateStr);
+    return isWateredOnDate(wateringHistory, plantId, selectedDateObj);
   };
 
   const handleMarkWatered = (plantId, e) => {
     e.stopPropagation();
     if (onMarkWatered) {
       onMarkWatered(plantId, selectedDateObj);
-      // Force local re-render
-      setTimeout(() => setLocalRefresh(prev => prev + 1), 100);
+      // InstantDB will automatically update the UI
     }
   };
 
@@ -37,8 +26,7 @@ const DateModal = ({ selectedDate, plants, onClose, onMarkWatered, onUnmarkWater
     e.stopPropagation();
     if (onUnmarkWatered) {
       onUnmarkWatered(plantId, selectedDateObj);
-      // Force local re-render
-      setTimeout(() => setLocalRefresh(prev => prev + 1), 100);
+      // InstantDB will automatically update the UI
     }
   };
 

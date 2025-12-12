@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths, startOfWeek, endOfWeek, isBefore, isAfter } from 'date-fns';
 import { getAdjustedWateringDays } from '../utils/seasonal';
-import { getLastWateredDate, getWateringHistoryForPlant } from '../utils/storage';
+import { getLastWateredDate, getWateringHistoryForPlant, isWateredOnDate } from '../utils/instantdb';
 import { getNextWateringDate, formatDate } from '../utils/dateHelpers';
 import DateModal from './DateModal';
 import '../styles/Calendar.css';
 
-const Calendar = ({ plants, onDateClick, onMarkWatered, onUnmarkWatered, refreshKey }) => {
+const Calendar = ({ plants, wateringHistory, onDateClick, onMarkWatered, onUnmarkWatered }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(null);
 
@@ -21,7 +21,7 @@ const Calendar = ({ plants, onDateClick, onMarkWatered, onUnmarkWatered, refresh
     const endDate = new Date('2030-12-31T23:59:59'); // Generate dates up to end of 2030
     
     plants.forEach(plant => {
-      const lastWatered = getLastWateredDate(plant.id);
+      const lastWatered = getLastWateredDate(wateringHistory, plant.id);
       if (!lastWatered) return;
       
       // Start from the last watered date
@@ -72,9 +72,7 @@ const Calendar = ({ plants, onDateClick, onMarkWatered, onUnmarkWatered, refresh
   const getWateredPlantsForDate = (date) => {
     const wateredPlants = [];
     plants.forEach(plant => {
-      const history = getWateringHistoryForPlant(plant.id);
-      const dateStr = formatDate(date);
-      if (history.includes(dateStr)) {
+      if (isWateredOnDate(wateringHistory, plant.id, date)) {
         wateredPlants.push(plant);
       }
     });
@@ -215,10 +213,10 @@ const Calendar = ({ plants, onDateClick, onMarkWatered, onUnmarkWatered, refresh
           key={`modal-${selectedDate.getTime()}`}
           selectedDate={selectedDate}
           plants={plants}
+          wateringHistory={wateringHistory}
           onClose={handleCloseModal}
           onMarkWatered={handleMarkWatered}
           onUnmarkWatered={handleUnmarkWatered}
-          refreshKey={refreshKey}
         />
       )}
     </div>
