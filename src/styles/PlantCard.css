@@ -297,5 +297,59 @@
   .plant-name {
     font-size: 1.25rem;
   }
+
+  .care-tips-list {
+    font-size: 0.9rem;
+  }
+
+  .water-button {
+    font-size: 1rem;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+  .plant-card {
+    padding: 1rem;
+  }
+
+  .plant-emoji {
+    font-size: 2rem;
+  }
+
+  .plant-name {
+    font-size: 1.1rem;
+  }
+
+  .detail-label,
+  .detail-value {
+    font-size: 0.85rem;
+  }
+
+  .status-badge {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.7rem;
+  }
+
+  .care-tips-summary {
+    font-size: 0.85rem;
+  }
+
+  .care-tips-list {
+    font-size: 0.85rem;
+  }
+
+  .water-button {
+    font-size: 0.9rem;
+    padding: 0.85rem;
+  }
+
+  .delete-plant-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+    top: 8px;
+    right: 8px;
+  }
 }
 

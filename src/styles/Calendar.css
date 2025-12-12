@@ -308,33 +308,52 @@
 @media (max-width: 768px) {
   .calendar-container {
     padding: 1rem;
+    max-width: 100%;
   }
 
   .calendar-header {
     margin-bottom: 1rem;
+    gap: 0.5rem;
+  }
+
+  .calendar-title-section {
+    overflow: hidden;
   }
 
   .calendar-month-title {
     font-size: 1.25rem;
   }
 
+  .calendar-instruction {
+    font-size: 0.75rem;
+  }
+
   .calendar-nav-btn {
     width: 35px;
     height: 35px;
     font-size: 1.25rem;
+    flex-shrink: 0;
+  }
+
+  .calendar-weekday {
+    font-size: 0.7rem;
+    padding: 0.25rem;
   }
 
   .calendar-day {
     padding: 0.25rem;
+    min-height: 50px;
   }
 
   .day-number {
     font-size: 0.85rem;
   }
 
-  .watering-dot {
+  .watering-dot,
+  .watered-dot {
     width: 6px;
     height: 6px;
+    font-size: 6px;
   }
 
   .calendar-legend {
@@ -369,6 +388,49 @@
     width: 12px;
     height: 12px;
     font-size: 7px;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+  .calendar-container {
+    padding: 0.5rem;
+  }
+
+  .calendar-instruction {
+    display: none;
+  }
+
+  .calendar-month-title {
+    font-size: 1rem;
+  }
+
+  .calendar-nav-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 1rem;
+  }
+
+  .calendar-weekday {
+    font-size: 0.65rem;
+  }
+
+  .calendar-day {
+    min-height: 45px;
+    padding: 0.2rem;
+  }
+
+  .day-number {
+    font-size: 0.75rem;
+  }
+
+  .watering-indicators,
+  .watered-indicators {
+    gap: 1px;
+  }
+
+  .legend-item {
+    font-size: 0.75rem;
   }
 }
 
