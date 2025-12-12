@@ -307,7 +307,7 @@
 
 @media (max-width: 768px) {
   .calendar-container {
-    padding: 1rem;
+    padding: 0.75rem;
     max-width: 100%;
   }
 
@@ -335,13 +335,22 @@
     flex-shrink: 0;
   }
 
+  .calendar-weekdays {
+    gap: 0.25rem;
+  }
+
   .calendar-weekday {
-    font-size: 0.7rem;
-    padding: 0.25rem;
+    font-size: 0.65rem;
+    padding: 0.2rem;
+    letter-spacing: 1px;
+  }
+
+  .calendar-days {
+    gap: 0.25rem;
   }
 
   .calendar-day {
-    padding: 0.25rem;
+    padding: 0.2rem;
     min-height: 50px;
   }
 
@@ -411,26 +420,41 @@
     font-size: 1rem;
   }
 
+  .calendar-weekdays {
+    gap: 0.15rem;
+  }
+
   .calendar-weekday {
-    font-size: 0.65rem;
+    font-size: 0.6rem;
+    padding: 0.15rem;
+    letter-spacing: 0.5px;
+  }
+
+  .calendar-days {
+    gap: 0.15rem;
   }
 
   .calendar-day {
-    min-height: 45px;
-    padding: 0.2rem;
+    min-height: 42px;
+    padding: 0.15rem;
   }
 
   .day-number {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
   }
 
   .watering-indicators,
   .watered-indicators {
     gap: 1px;
+    flex-wrap: wrap;
   }
 
   .legend-item {
     font-size: 0.75rem;
+  }
+
+  .legend-section {
+    padding: 0.75rem;
   }
 }
 
