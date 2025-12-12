@@ -204,13 +204,6 @@ function App() {
         </h1>
         <div className="header-info">
           <span className="season-badge">Season: {currentSeason.charAt(0).toUpperCase() + currentSeason.slice(1)}</span>
-          <button 
-            className={`notification-toggle ${notificationsEnabled ? 'enabled' : ''}`}
-            onClick={handleToggleNotifications}
-            title={notificationsEnabled ? 'Disable notifications' : 'Enable notifications'}
-          >
-            {notificationsEnabled ? '🔔' : '🔕'}
-          </button>
         </div>
       </header>
 
