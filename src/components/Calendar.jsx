@@ -129,12 +129,12 @@ const Calendar = ({ plants, wateringHistory, onDateClick, onMarkWatered, onUnmar
   return (
     <div className="calendar-container">
       <div className="calendar-header">
-        <button onClick={previousMonth} className="calendar-nav-btn">‹</button>
+        <button onClick={previousMonth} className="calendar-nav-btn">&lt;</button>
         <div className="calendar-title-section">
           <h2 className="calendar-month-title">{format(currentMonth, 'MMMM yyyy')}</h2>
           <p className="calendar-instruction">Click any date to mark plants as watered</p>
         </div>
-        <button onClick={nextMonth} className="calendar-nav-btn">›</button>
+        <button onClick={nextMonth} className="calendar-nav-btn">&gt;</button>
       </div>
       
       <div className="calendar-grid">

@@ -48,8 +48,8 @@
   width: 45px;
   height: 45px;
   border-radius: 50%;
-  font-size: 1.8rem;
-  font-weight: 900;
+  font-size: 1.5rem;
+  font-weight: bold;
   display: grid;
   place-items: center;
   transition: all 0.3s ease;
@@ -58,10 +58,9 @@
   text-shadow: 0 0 8px rgba(255, 68, 68, 0.8);
   padding: 0;
   margin: 0;
-  line-height: 0;
+  line-height: 1;
   cursor: pointer;
-  font-family: Arial, sans-serif;
-  vertical-align: middle;
+  font-family: monospace;
 }
 
 .calendar-nav-btn:hover {
