@@ -30,6 +30,13 @@ const _schema = i.schema({
       careTips: i.json().optional(),
       seasonalAdjustments: i.json().optional(),
       createdAt: i.number().optional(),
+      imageUrl: i.string().optional(),
+    }),
+    // Plant images - stores uploaded photos for plants
+    plantImages: i.entity({
+      plantId: i.string(),
+      imageUrl: i.string(),
+      uploadedAt: i.number(),
     }),
   },
   links: {

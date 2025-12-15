@@ -27,6 +27,7 @@ function App() {
   const { isLoading, error, data } = db.useQuery({
     wateringHistory: {},
     customPlants: {},
+    plantImages: {},
   });
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
@@ -48,6 +49,7 @@ function App() {
   const allPlants = [...PLANTS, ...customPlantsArray].filter(plant => !hiddenPlantIds.includes(plant.id));
   
   const wateringHistory = data?.wateringHistory || [];
+  const plantImages = data?.plantImages || [];
 
   // Force re-render helper (not needed with InstantDB's reactive updates)
   const refresh = useCallback(() => {
@@ -244,6 +246,7 @@ function App() {
             <PlantList 
               plants={allPlants}
               wateringHistory={wateringHistory}
+              plantImages={plantImages}
               onWaterClick={handleWaterClick}
               onNewPlantClick={() => setShowNewPlantModal(true)}
               onDeletePlant={handleDeletePlant}

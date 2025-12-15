@@ -2,7 +2,7 @@ import React from 'react';
 import PlantCard from './PlantCard';
 import '../styles/PlantList.css';
 
-const PlantList = ({ plants, wateringHistory, onWaterClick, onNewPlantClick, onDeletePlant }) => {
+const PlantList = ({ plants, wateringHistory, plantImages, onWaterClick, onNewPlantClick, onDeletePlant }) => {
   return (
     <div className="plant-list-container">
       <div className="plant-list">
@@ -11,6 +11,7 @@ const PlantList = ({ plants, wateringHistory, onWaterClick, onNewPlantClick, onD
             key={plant.id} 
             plant={plant}
             wateringHistory={wateringHistory}
+            plantImages={plantImages}
             onWaterClick={onWaterClick}
             onDelete={onDeletePlant}
           />
