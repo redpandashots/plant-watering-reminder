@@ -51,34 +51,29 @@ export const compressImage = (file, maxWidth = 800, maxHeight = 800, quality = 0
 };
 
 /**
- * Upload image file to InstantDB storage
+ * Convert blob to base64 data URL
+ */
+const blobToBase64 = (blob) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+};
+
+/**
+ * Upload image file - converts to base64 and stores in database
  */
 export const uploadPlantImage = async (fileOrBlob) => {
   try {
-    // Ensure we have a proper File object with a name
-    let fileToUpload;
+    // Convert image to base64 data URL
+    const base64Data = await blobToBase64(fileOrBlob);
     
-    if (fileOrBlob instanceof Blob && !(fileOrBlob instanceof File)) {
-      // Convert Blob to File with a proper filename
-      const timestamp = Date.now();
-      fileToUpload = new File([fileOrBlob], `plant-${timestamp}.jpg`, {
-        type: 'image/jpeg',
-        lastModified: timestamp,
-      });
-    } else {
-      fileToUpload = fileOrBlob;
-    }
-    
-    // Upload to InstantDB storage
-    const result = await db.storage.upload(fileToUpload);
-    
-    if (result && result.url) {
-      return result.url;
-    }
-    
-    throw new Error('Failed to upload image');
+    // Return the base64 data URL to be stored in database
+    return base64Data;
   } catch (error) {
-    console.error('Error uploading image:', error);
+    console.error('Error converting image:', error);
     throw error;
   }
 };
