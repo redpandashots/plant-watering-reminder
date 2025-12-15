@@ -53,10 +53,24 @@ export const compressImage = (file, maxWidth = 800, maxHeight = 800, quality = 0
 /**
  * Upload image file to InstantDB storage
  */
-export const uploadPlantImage = async (file) => {
+export const uploadPlantImage = async (fileOrBlob) => {
   try {
+    // Ensure we have a proper File object with a name
+    let fileToUpload;
+    
+    if (fileOrBlob instanceof Blob && !(fileOrBlob instanceof File)) {
+      // Convert Blob to File with a proper filename
+      const timestamp = Date.now();
+      fileToUpload = new File([fileOrBlob], `plant-${timestamp}.jpg`, {
+        type: 'image/jpeg',
+        lastModified: timestamp,
+      });
+    } else {
+      fileToUpload = fileOrBlob;
+    }
+    
     // Upload to InstantDB storage
-    const result = await db.storage.upload(file);
+    const result = await db.storage.upload(fileToUpload);
     
     if (result && result.url) {
       return result.url;
